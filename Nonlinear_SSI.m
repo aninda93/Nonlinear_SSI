@@ -1,4 +1,6 @@
 %% Formulated and Encoded by Aninda Pal
+%%Supervised by: Ritwik Ghoshal
+%% Email correspondence: aninda.buzz@gmail.com & ritwik@naval.iitkgp.ac.in
 % Organization :: IIT Kharagpur, Departmentof Ocean Engg & Naval Architecture
 % cite using DOI :: 10.1098/rspa.2023.0707
 %% Problem initialization
