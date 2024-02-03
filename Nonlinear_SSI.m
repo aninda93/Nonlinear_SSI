@@ -13,7 +13,6 @@ syms psi_1(t) psi_2(t) P_ior P_io P_o
 % P_o= atmospheric pressure
 tic
 p_x=P_io; % incident overpressure
-% P_o=101325; % atmospheric pressure
 P_ior= p_x/P_o; % incident over pressure ratio
 psi=P_ior*psi_1(t);
 
@@ -40,7 +39,7 @@ Ex_dddot= diff(Ex_ddot,t);
 psi_1dot=diff(psi_1(t),t);
 psi_2dot=diff(psi_2(t),t);
 
-% Backpressure term
+% Nonlinear backpressure term
 ad=rho*((gamma+1)/4*Ex_dot+sqrt(((gamma+1)/4)^2*Ex_dot^2+a1^2))*Ex_dot; % backpressure damping
 
 % Resistive part of Governing differential equation
