@@ -40,14 +40,14 @@ psi_1dot=diff(psi_1(t),t);
 psi_2dot=diff(psi_2(t),t);
 
 % Nonlinear backpressure term
-ad=rho*((gamma+1)/4*Ex_dot+sqrt(((gamma+1)/4)^2*Ex_dot^2+a1^2))*Ex_dot; % backpressure damping
+ada=rho*((gamma+1)/4*Ex_dot+sqrt(((gamma+1)/4)^2*Ex_dot^2+a1^2))*Ex_dot; % backpressure damping :: aerodynamic damping
 
 % Resistive part of Governing differential equation
 % Three cases to select:: A. Nonlinear damping
 %                         B. Linear damping
 %                         C. Constant damping
 
-EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+1*diff(ad,t)+m*omega^2*Ex_dot;% For nonlinear damping
+EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+1*diff(ada,t)+m*omega^2*Ex_dot;% For nonlinear damping
 % EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+Cd*rho*a1*(Ex_ddot)+m*omega^2*Ex_dot; % For Linear damping
 % EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+0*(Ex_ddot)+m*omega^2*Ex_dot; % For Constant damping
 
