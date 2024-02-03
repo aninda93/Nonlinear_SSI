@@ -2,8 +2,7 @@
 % Organization :: IIT Kharagpur, Departmentof Ocean Engg & Naval Architecture
 % cite using DOI :: 10.1098/rspa.2023.0707
 %% Problem initialization
-% Functions required : makefunTeich, Teicheq & build_F
-% comparing Teich low intensity
+% Functions required : makfun_PG & PG_eq
 clc
 clear all
 syms phi psi xia xis rho c m omega Cd a1 gamma alpha t_d x p
@@ -20,12 +19,12 @@ psi=P_ior*psi_1(t);
 
 % Reflection coefficient :: For comparison
 C_r=((3*gamma-1)*psi+4*gamma)/((1*gamma-1)*psi+2*gamma); % coefficient of reflection
-phi=P_ior*psi_2(t)/(1+P_ior*psi_1(t));
+phi=P_ior*psi_2(t)/(1+P_ior*psi_1(t)); 
 
-% psi
+% psi :: incident overpressure
 psid= diff(psi,t);
 psidd= diff(psid,t);
-% phi
+% phi :: reflected overpressure
 phid= diff(phi,t);
 phidd= diff(phid,t);
 
@@ -45,6 +44,10 @@ psi_2dot=diff(psi_2(t),t);
 ad=rho*((gamma+1)/4*Ex_dot+sqrt(((gamma+1)/4)^2*Ex_dot^2+a1^2))*Ex_dot; % backpressure damping
 
 % Resistive part of Governing differential equation
+% Three cases to select:: A. Nonlinear damping
+%                         B. Linear damping
+%                         C. Constant damping
+
 EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+1*diff(ad,t)+m*omega^2*Ex_dot;% For nonlinear damping
 % EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+Cd*rho*a1*(Ex_ddot)+m*omega^2*Ex_dot; % For Linear damping
 % EL= m*(Ex_dddot)+2*m*omega*xis*(Ex_ddot)+0*(Ex_ddot)+m*omega^2*Ex_dot; % For Constant damping
@@ -75,9 +78,8 @@ Eq1=subs(Eq,[P_o P_io Cd a1 alpha gamma m omega rho t_d xis],[Pz inop cod ss dc 
 Eq2=double(solve(Eq1,AA));
 Line1= 'Reflected over-pressure profile amplitude is ';
 disp([Line1, num2str(Eq2),' units']);
-disp(['When the amplitude of incident overpressure profile is 1 units']);
+disp('When the amplitude of incident overpressure profile is 1 units');
 C_rval=subs(C_r,[psi_1 P_o P_io Cd a1 alpha gamma m omega rho t_d xis t],[PR Pz inop cod ss dc gam mass omg*2*pi ad timd sd 0]);
-double(C_rval);
 Line2= 'Reflection coefficient is ';
 disp([Line2, num2str(double(C_rval))]);
 
@@ -92,7 +94,7 @@ Eq8=double(subs(Eq7,[psi_2(0)],[Eq2]));
 syms x(t) p1 p2 p3 
 EQ= (EL-ER)==0;
 N= EL-ER;
-% p1 is acceleration p2 is velocity and p3 is dispalacement
+% p1 is acceleration; p2 is velocity; and p3 is dispalacement
 EQ2= subs(N,[diff(diff(psi_2,t)) diff(psi_2,t) psi_2],[p1 p2 p3]);
 EQ3=solve(EQ2,p1);
 EQ4=subs(EQ3,[psi_1 P_o P_io Cd a1 alpha gamma m omega rho t_d xis],[PR Pz inop cod ss dc gam mass omg*2*pi ad timd sd]);
@@ -100,7 +102,7 @@ EQ4=subs(EQ4,[psi_1 P_o P_io Cd a1 alpha gamma m omega rho t_d xis],[PR Pz inop 
 EQ5= matlabFunction(EQ4);
 [tg1, yg1] = ode23(@(t,y)PG_eq(t,y,EQ5),[0 0.01],[Eq2 Eq8]);
 % Plotting
-figure(4),clf
+figure(1),clf
 pi=double(subs(ip,t,tg1));
 hold on
 plot(tg1, pi,'k'); % incident profile
@@ -121,7 +123,7 @@ Eqm1=subs(Eqm,[psi_1 psi_2],[r1 r2]);%si1 si2
 Eqm2=double(subs(Eqm1,{r1 r2},{si1 si2})); % gives velocity
 dispval=cumtrapz(tg1,Eqm2); % gives displacement
 
-figure(7),clf
+figure(2),clf
 plot(tg1,dispval,'m');
 xlim([-0.001 1])
 title('Displacement response');
